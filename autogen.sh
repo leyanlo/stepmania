@@ -38,31 +38,15 @@ DIE=0
   DIE=1
 }
 
-# Try automake-1.7 and up.
-if automake-1.11 --version > /dev/null 2>&1; then
-	ACLOCAL=aclocal-1.11
-	AUTOMAKE=automake-1.11
-elif automake-1.10 --version > /dev/null 2>&1; then
-	ACLOCAL=aclocal-1.10
-	AUTOMAKE=automake-1.10
-elif automake-1.9 --version > /dev/null 2>&1; then
-	ACLOCAL=aclocal-1.9
-	AUTOMAKE=automake-1.9
-elif automake-1.8 --version > /dev/null 2>&1; then
-	ACLOCAL=aclocal-1.8
-	AUTOMAKE=automake-1.8
-elif automake-1.7 --version > /dev/null 2>&1; then
-	ACLOCAL=aclocal-1.7
-	AUTOMAKE=automake-1.7
-fi
-
-# If none of those were found, check if "automake" exists, and check the version.
 if test -z "$AUTOMAKE" && automake --version > /dev/null 2>&1; then
-	version=`automake --version 2>/dev/null|head -1|sed -e 's/.* \([0-9]\+\.[0-9]\+\).*$/\1/'`
+	version=`automake --version | head -1 | awk '{print $4}'`
 
 	IFS=.
 	set $version
-	if test -z "$version"; then
+	if test $1 -eq 1 -a $2 -ge 7; then
+		ACLOCAL=aclocal-$1.$2
+		AUTOMAKE=automake-$1.$2
+	elif test -z "$version"; then
 		echo "\`automake' appears to be installed, but the version string could not"
 		echo "be parsed.  Proceeding anyway ..."
 	elif test $1 -lt 1 -o $2 -lt 7; then
